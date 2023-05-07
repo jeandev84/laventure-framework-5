@@ -57,10 +57,8 @@ class Dotenv
     */
     public function export(): bool
     {
-        if (! $filename = $this->loadEnvironmentFile('.env.local')) {
-            if (! touch($filename)) {
-                return false;
-            }
+        if (! touch($filename = $this->loadEnvironmentFile('.env.local'))) {
+            return false;
         }
 
         if ($filename = realpath($filename)) {
