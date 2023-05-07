@@ -109,7 +109,7 @@ class Dotenv
      * @param string $env
      * @return void
     */
-    public function put(string $env): void
+    private function put(string $env): void
     {
         if (preg_match('#^(?=[A-Z])(.*)=(.*)$#', $env, $matches)) {
             $items = str_replace(' ', '', trim($matches[0]));
