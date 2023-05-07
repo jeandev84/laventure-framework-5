@@ -1,0 +1,19 @@
+{
+  "name": "laventure/framework",
+  "description": "MVC framework using php language for buiding web application",
+  "autoload": {
+    "psr-4": {
+      "Laventure\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Jean-Claude",
+      "email": "jeanyao@ymail.com"
+    }
+  ],
+  "require": {
+    "symfony/var-dumper": "^6.2",
+    "friendsofphp/php-cs-fixer": "^3.16"
+  }
+}
