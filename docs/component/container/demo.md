@@ -3,9 +3,11 @@
 ```php 
 require_once __DIR__.'/vendor/autoload.php';
 
+
 $container = new \Laventure\Component\Container\Container();
 
-class Foo
+
+class Foo implements \Laventure\Component\Container\Contract\ContainerAwareInterface
 {
     /**
      * @param Bar $bar
@@ -20,6 +22,23 @@ class Foo
     public function index(Bar $bar)
     {
          return __FUNCTION__ . " ". get_class($bar) . "\n";
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setContainer(\Laventure\Component\Container\Container $container)
+    {
+        dd("ContainerAwareSet: ", $container);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function getContainer(): \Laventure\Component\Container\Container
+    {
+         dump('ContainerAwareGet: ');
     }
 }
 
@@ -95,4 +114,6 @@ $container->call([Auth::class, 'login'], ['username' => 'brown', 'password' => '
 
 dump($container->get(SomeInstanceInterface::class));
 dump($container->get(SomeInstance::class));
+
+dump($container->call([Foo::class, 'index']));
 ```
