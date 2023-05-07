@@ -221,7 +221,7 @@ class Container implements ContainerInterface, \ArrayAccess
       *
       * @return bool
      */
-     public function isShared(string $abstract): bool
+     public function shared(string $abstract): bool
      {
          return ! empty($this->shared[$abstract]) || $this->hasInstance($abstract);
      }
@@ -528,7 +528,7 @@ class Container implements ContainerInterface, \ArrayAccess
          $abstract = $this->getAlias($abstract);
          $concrete = $this->getConcrete($abstract);
 
-         if ($this->isShared($abstract)) {
+         if ($this->shared($abstract)) {
              return $this->share($abstract, $concrete);
          } elseif ($this->instantiable($abstract)) {
              return $this->makeInstance($abstract, $arguments);
