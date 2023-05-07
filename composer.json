@@ -1,5 +1,5 @@
 {
-  "name": "laventure/framework",
+  "name": "bin/vendor/laventure/framework",
   "description": "MVC framework using php language for buiding web application",
   "autoload": {
     "psr-4": {
