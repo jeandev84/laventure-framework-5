@@ -434,7 +434,7 @@ class Container implements ContainerInterface, \ArrayAccess
      *
      * @return bool
     */
-    public function isInstantiable($abstract): bool
+    public function classExists($abstract): bool
     {
          return is_string($abstract) && class_exists($abstract);
     }
@@ -530,7 +530,7 @@ class Container implements ContainerInterface, \ArrayAccess
 
          if ($this->isShared($abstract)) {
              return $this->share($abstract, $concrete);
-         } elseif ($this->isInstantiable($abstract)) {
+         } elseif ($this->classExists($abstract)) {
              return $this->makeInstance($abstract, $arguments);
          }
 
@@ -716,7 +716,7 @@ class Container implements ContainerInterface, \ArrayAccess
     {
         if ($concrete instanceof Closure) {
             return $this->callAnonymous($concrete);
-        } elseif ($this->isInstantiable($concrete)) {
+        } elseif ($this->classExists($concrete)) {
             return $this->make($concrete);
         }
 
