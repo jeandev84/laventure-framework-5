@@ -639,15 +639,15 @@ class Container implements ContainerInterface, \ArrayAccess
                return $this->callAnonymous($concrete, $arguments);
           }
 
-          list($concrete, $method) = $concrete;
+          list($class, $method) = $concrete;
 
-          if (! method_exists($concrete, $method)) {
+          if (! method_exists($class, $method)) {
                return false;
           }
 
-          $reflection = new ReflectionMethod($concrete, $method);
+          $reflection = new ReflectionMethod($class, $method);
           $arguments  = $this->getDependencies($reflection->getParameters(), $arguments);
-          $object = $this->get($concrete);
+          $object = $this->get($class);
 
           $implements = class_implements($object);
 
