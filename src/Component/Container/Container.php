@@ -708,7 +708,7 @@ class Container implements ContainerInterface, \ArrayAccess
 
              } catch (\ReflectionException $e) {
 
-                  throw new Exception($e->getMessage(), $e->getCode());
+                  throw new ContainerException($e->getMessage(), $e->getCode());
              }
 
          })();
