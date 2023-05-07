@@ -11,6 +11,7 @@ use Laventure\Component\Container\Exception\ContainerException;
 use Laventure\Component\Container\Exception\NotFoundException;
 use Laventure\Component\Container\Facade\Facade;
 use Laventure\Component\Container\Provider\Contract\BootableServiceProvider;
+use Laventure\Component\Container\Provider\Exception\ServiceProviderException;
 use Laventure\Component\Container\Provider\ServiceProvider;
 use ReflectionClass;
 use ReflectionFunction;
@@ -470,9 +471,9 @@ class Container implements ContainerInterface, \ArrayAccess
      *
      * @param string $abstract
      *
-     * @return object|null
+     * @return object
     */
-    public function factory(string $abstract): ?object
+    public function factory(string $abstract): object
     {
         return $this->make($abstract);
     }
@@ -593,7 +594,7 @@ class Container implements ContainerInterface, \ArrayAccess
          $name = $provider->getName();
 
          if (! isset($this->providers[$name])) {
-             $this->bootServiceProvider($provider);
+             $this->runServiceProvider($provider);
              $this->providers[$name] = $provider;
          }
 
@@ -602,12 +603,29 @@ class Container implements ContainerInterface, \ArrayAccess
 
 
 
+    /**
+     * @param string[] $providers
+     *
+     * @return $this
+    */
+    public function addProviders(array $providers): static
+    {
+        foreach ($providers as $provider) {
+             $this->addProvider($this->factory($provider));
+        }
+
+        return $this;
+    }
+
+
+
+
 
     /**
      * @param ServiceProvider $provider
      * @return void
     */
-    private function bootServiceProvider(ServiceProvider $provider): void
+    private function runServiceProvider(ServiceProvider $provider): void
     {
         $provider->setContainer($this);
         $this->addProvides($provider->getProvides());
@@ -668,23 +686,30 @@ class Container implements ContainerInterface, \ArrayAccess
       *
       * @param array $with
       *
-      * @return object|null
+      * @return object
      */
-     private function makeInstance(string $abstract, array $with = []): ?object
+     private function makeInstance(string $abstract, array $with = []): object
      {
          return (function () use ($abstract, $with) {
 
-              $reflection = new ReflectionClass($abstract);
+             try {
 
-              $constructor = $reflection->getConstructor();
+                 $reflection = new ReflectionClass($abstract);
 
-              if (is_null($constructor)) {
-                 return $reflection->newInstance();
-              }
+                 $constructor = $reflection->getConstructor();
 
-              $dependencies = $this->getDependencies($constructor->getParameters(), $with);
+                 if (is_null($constructor)) {
+                     return $reflection->newInstance();
+                 }
 
-              return $reflection->newInstanceArgs($dependencies);
+                 $dependencies = $this->getDependencies($constructor->getParameters(), $with);
+
+                 return $reflection->newInstanceArgs($dependencies);
+
+             } catch (\ReflectionException $e) {
+
+                  throw new Exception($e->getMessage(), $e->getCode());
+             }
 
          })();
 
@@ -699,12 +724,9 @@ class Container implements ContainerInterface, \ArrayAccess
      public function get($id)
      {
          try {
-
              return $this->resolve($id);
-
          } catch (Exception $e) {
-
-             throw new ContainerException("something went wrong for $id because {$e->getMessage()}", $e->getCode());
+             throw new ContainerException("something went wrong for [$id] because: {$e->getMessage()}", $e->getCode());
          }
      }
 
