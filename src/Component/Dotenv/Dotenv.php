@@ -50,14 +50,13 @@ class Dotenv
     }
 
 
-
-
     /**
+     * @param string $filename
      * @return bool
     */
-    public function export(): bool
+    public function export(string $filename = '.env.local'): bool
     {
-        if (! touch($filename = $this->loadEnvironmentFile('.env.local'))) {
+        if (! touch($filename = $this->loadEnvironmentFile($filename))) {
             return false;
         }
 
