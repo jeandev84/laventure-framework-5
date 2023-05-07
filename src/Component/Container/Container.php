@@ -645,17 +645,17 @@ class Container implements ContainerInterface, \ArrayAccess
                return false;
           }
 
-         $reflection = new ReflectionMethod($concrete, $method);
-         $arguments  = $this->getDependencies($reflection->getParameters(), $arguments);
-         $object = $this->get($concrete);
+          $reflection = new ReflectionMethod($concrete, $method);
+          $arguments  = $this->getDependencies($reflection->getParameters(), $arguments);
+          $object = $this->get($concrete);
 
-         $implements = class_implements($object);
+          $implements = class_implements($object);
 
-         if (isset($implements[ContainerAwareInterface::class])) {
-            $object->setContainer($this);
-         }
+          if (isset($implements[ContainerAwareInterface::class])) {
+              $object->setContainer($this);
+          }
 
-         return call_user_func_array([$object, $method], $arguments);
+          return call_user_func_array([$object, $method], $arguments);
     }
 
 
