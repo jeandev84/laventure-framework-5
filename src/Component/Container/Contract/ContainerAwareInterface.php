@@ -20,9 +20,9 @@ interface ContainerAwareInterface
      *
      * @param Container $container
      *
-     * @return mixed
+     * @return void
     */
-    public function setContainer(Container $container);
+    public function setContainer(Container $container): void;
 
 
 

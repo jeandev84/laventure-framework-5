@@ -1,0 +1,51 @@
+# Table of contents
+1. [Introduction](#introduction)
+2. [Some paragraph](#paragraph1)
+    1. [Sub paragraph](#subparagraph1)
+3. [Another paragraph](#paragraph2)
+
+## This is the introduction <a name="introduction"></a>
+Some introduction text, formatted in heading 2 style
+
+## Some paragraph <a name="paragraph1"></a>
+The first paragraph text
+
+### Sub paragraph <a name="subparagraph1"></a>
+This is a sub paragraph, formatted in heading 3 style
+
+## Another paragraph <a name="paragraph2"></a>
+The second paragraph text
+Produces this:
+
+Table of contents
+Introduction
+Some paragraph
+Sub paragraph
+Another paragraph
+
+
+
+## Content
+
+**[1. Markdown](#heading--1)**
+
+  * [1.1. Markdown formatting cheatsheet](#heading--1-1)
+  * [1.2. Markdown formatting details](#heading--1-2)
+
+**[2. BBCode formatting](#heading--2)**
+
+  * [2.1. Basic text formatting](#heading--2-1)
+
+      * [2.1.1. Not so basic text formatting](#heading--2-1-1)
+
+  * [2.2. Lists, Images, Code](#heading--2-2)
+  * [2.3. Special features](#heading--2-3)
+
+----
+Inside your document, you would place the target subpart markers like this:
+
+<div id="heading--1-1"/>
+### 1.1. Markdown formatting cheatsheet
+Depending on where and how you use Markdown, the following should also work, and provides nicer-looking Markdown code:
+
+### 1.1. Markdown formatting cheatsheet <a name="heading--1-1"/>

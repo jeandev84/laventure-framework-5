@@ -9,6 +9,9 @@ use Laventure\Component\Container\Contract\ContainerAwareInterface;
 use Laventure\Component\Container\Contract\ContainerInterface;
 use Laventure\Component\Container\Exception\ContainerException;
 use Laventure\Component\Container\Exception\NotFoundException;
+use Laventure\Component\Container\Facade\Facade;
+use Laventure\Component\Container\Provider\Contract\BootableServiceProvider;
+use Laventure\Component\Container\Provider\ServiceProvider;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionMethod;
@@ -97,7 +100,7 @@ class Container implements ContainerInterface, \ArrayAccess
     /**
      * collection service providers
      *
-     * @var array
+     * @var ServiceProvider[]
     */
     protected $providers = [];
 
@@ -108,7 +111,7 @@ class Container implements ContainerInterface, \ArrayAccess
     /**
      * collection facades
      *
-     * @var array
+     * @var Facade[]
     */
     protected $facades = [];
 
@@ -266,36 +269,15 @@ class Container implements ContainerInterface, \ArrayAccess
      * @param array $aliases
      *
      * @return $this
-     */
+    */
     public function aliases(string $abstract, array $aliases): static
     {
         foreach ($aliases as $alias) {
-            $this->alias($abstract, $alias);
+            $this->aliases[$alias] = $abstract;
         }
 
         return $this;
     }
-
-
-
-
-    /**
-     * Bind alias of given abstract
-     *
-     * @param string $alias
-     *
-     * @param string $abstract
-     *
-     * @return $this
-    */
-    public function alias(string $alias, string $abstract): static
-    {
-         $this->aliases[$alias] = $abstract;
-
-         return $this;
-    }
-
-
 
 
     /**
@@ -514,6 +496,145 @@ class Container implements ContainerInterface, \ArrayAccess
 
 
 
+     /**
+      * Add facade
+      *
+      * @param Facade $facade
+      *
+      * @return $this
+     */
+     public function addFacade(Facade $facade): static
+     {
+         $name = $facade->getName();
+
+         if (! isset($this->facades[$name])) {
+             $facade->setContainer($this);
+             $this->facades[$name] = $facade;
+         }
+
+         return $this;
+     }
+
+
+
+
+     /**
+      * Add collection of facades
+      *
+      * @param Facade[] $facades
+      *
+      * @return $this
+     */
+     public function addFacades(array $facades): static
+     {
+          foreach ($facades as $facade) {
+              $this->addFacade($facade);
+          }
+
+          return $this;
+     }
+
+
+
+
+
+     /**
+      * Determine if the given name contains facades
+      *
+      * @param string $name
+      *
+      * @return bool
+     */
+     public function hasFacade(string $name): bool
+     {
+         return isset($this->facades[$name]);
+     }
+
+
+
+
+     /**
+      * Return facade by given name
+      *
+      * @param string $name
+      *
+      * @return Facade|null
+     */
+     public function getFacade(string $name): ?Facade
+     {
+          return $this->facades[$name] ?? null;
+     }
+
+
+
+
+    /**
+     * Returns all facades
+     *
+     * @return Facade[]
+    */
+    public function getFacades(): array
+    {
+        return $this->facades;
+    }
+
+
+
+
+    /**
+     * Add service provider
+     *
+     * @param ServiceProvider $provider
+     *
+     * @return $this
+    */
+    public function addProvider(ServiceProvider $provider): static
+    {
+         $name = $provider->getName();
+
+         if (! isset($this->providers[$name])) {
+             $this->bootServiceProvider($provider);
+             $this->providers[$name] = $provider;
+         }
+
+         return $this;
+    }
+
+
+
+
+    /**
+     * @param ServiceProvider $provider
+     * @return void
+    */
+    private function bootServiceProvider(ServiceProvider $provider): void
+    {
+        $provider->setContainer($this);
+        $this->addProvides($provider->getProvides());
+
+        if ($provider instanceof BootableServiceProvider) {
+            $provider->boot();
+        }
+
+        $provider->register();
+        $provider->terminate();
+    }
+
+
+    /**
+     * @param array $provides
+     * @return void
+    */
+    private function addProvides(array $provides): void
+    {
+        foreach ($provides as $abstract => $aliases) {
+            $this->aliases($abstract, $aliases);
+        }
+    }
+
+
+
+
     /**
      * Returns concrete value of bounded parameter
      *
@@ -523,7 +644,7 @@ class Container implements ContainerInterface, \ArrayAccess
      *
      * @return mixed
      */
-     public function resolve(string $abstract, array $arguments = []): mixed
+     private function resolve(string $abstract, array $arguments = []): mixed
      {
          $abstract = $this->getAlias($abstract);
          $concrete = $this->getConcrete($abstract);
@@ -641,17 +762,15 @@ class Container implements ContainerInterface, \ArrayAccess
 
           list($class, $method) = $concrete;
 
-          if (! method_exists($class, $method)) {
+          $reflection = new ReflectionMethod($class, $method);
+          $arguments  = $this->getDependencies($reflection->getParameters(), $arguments);
+          $object     = $this->get($class);
+
+          if (! is_callable([$object, $method])) {
                return false;
           }
 
-          $reflection = new ReflectionMethod($class, $method);
-          $arguments  = $this->getDependencies($reflection->getParameters(), $arguments);
-          $object = $this->get($class);
-
-          $implements = class_implements($object);
-
-          if (isset($implements[ContainerAwareInterface::class])) {
+          if ($object instanceof ContainerAwareInterface) {
               $object->setContainer($this);
           }
 
@@ -671,7 +790,7 @@ class Container implements ContainerInterface, \ArrayAccess
      * @param array $with
      *
      * @return array
-     */
+    */
     private function getDependencies(array $dependencies, array $with): array
     {
         $resolved = [];
@@ -704,7 +823,6 @@ class Container implements ContainerInterface, \ArrayAccess
 
         return [$dependency->getName(), $this->get($dependency->getName())];
     }
-
 
 
 
