@@ -55,6 +55,7 @@ interface RouteInterface
 
 
 
+
      /**
       * Return route name
       *
@@ -90,6 +91,17 @@ interface RouteInterface
 
 
 
+     /**
+      * Determine if the route name is not empty
+      *
+      * @return bool
+     */
+     public function hasName(): bool;
+
+
+
+
+
 
      /**
       * Determine if route is callable
@@ -115,11 +127,21 @@ interface RouteInterface
 
 
      /**
-      * Return controller and action
+      * Return controller name
       *
-      * @return array
+      * @return string
      */
-     public function getAction(): array;
+     public function getControllerName(): string;
+
+
+
+
+     /**
+      * Return action name
+      *
+      * @return string
+     */
+     public function getActionName(): string;
 
 
 
@@ -148,5 +170,5 @@ interface RouteInterface
      *
      * @return string
     */
-    public function generate(array $params = []): string;
+    public function generatePath(array $params = []): string;
 }

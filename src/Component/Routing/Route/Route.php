@@ -346,7 +346,7 @@ class Route implements RouteInterface
 
 
     /**
-     * @return string
+     * @inheritDoc
     */
     public function getControllerName(): string
     {
@@ -357,9 +357,7 @@ class Route implements RouteInterface
 
 
     /**
-     * Return controller action
-     *
-     * @return string
+     * @inheritDoc
     */
     public function getActionName(): string
     {
@@ -389,6 +387,8 @@ class Route implements RouteInterface
     {
         return $this->name;
     }
+
+
 
 
 
@@ -449,6 +449,15 @@ class Route implements RouteInterface
     }
 
 
+
+
+    /**
+     * @inheritDoc
+    */
+    public function hasName(): bool
+    {
+        return ! empty($this->name);
+    }
 
 
 
@@ -514,7 +523,7 @@ class Route implements RouteInterface
     /**
      * @inheritDoc
     */
-    public function generate(array $params = []): string
+    public function generatePath(array $params = []): string
     {
 
     }
