@@ -11,7 +11,7 @@ namespace Laventure\Component\Routing\Route;
  *
  * @package Laventure\Component\Routing\Route
 */
-class Route implements \ArrayAccess
+class Route
 {
 
 
@@ -742,49 +742,4 @@ class Route implements \ArrayAccess
     {
         return call_user_func_array($callable, array_values($this->params));
     }
-
-
-
-    /**
-     * @param mixed $offset
-     * @return bool
-     */
-    public function offsetExists($offset): bool
-    {
-        return isset($this->{$offset});
-    }
-
-
-
-    /**
-     * @param mixed $offset
-     * @return mixed|void
-     */
-    public function offsetGet($offset)
-    {
-        return $this->{$offset};
-    }
-
-
-
-
-    /**
-     * @param mixed $offset
-     * @param mixed $value
-    */
-    public function offsetSet($offset, $value)
-    {
-        $this->{$offset} = $value;
-    }
-
-
-
-    /**
-     * @param $offset
-    */
-    public function offsetUnset($offset)
-    {
-        unset($this->{$offset});
-    }
-
 }
