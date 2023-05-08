@@ -645,12 +645,7 @@ class Route
     */
     public function matchMethod(string $requestMethod): bool
     {
-         if(in_array($requestMethod, $this->methods)) {
-              $this->options(compact('requestMethod'));
-              return true;
-         }
-
-         return false;
+         return in_array($requestMethod, $this->methods);
     }
 
 
@@ -668,8 +663,6 @@ class Route
          if (preg_match($this->getPattern(), $this->resolveURL($requestPath), $matches)) {
 
               $this->params = $this->resolveMatches($matches);
-
-              $this->options(compact('requestPath'));
 
               return true;
          }
