@@ -1,8 +1,6 @@
 <?php
 namespace Laventure\Component\Routing\Route;
 
-use Laventure\Component\Routing\Route\Contract\RouteInterface;
-
 
 /**
  * @Route
@@ -13,7 +11,7 @@ use Laventure\Component\Routing\Route\Contract\RouteInterface;
  *
  * @package Laventure\Component\Routing\Route
 */
-class Route implements RouteInterface
+class Route implements \ArrayAccess
 {
 
 
@@ -743,6 +741,50 @@ class Route implements RouteInterface
     private function call(callable $callable): mixed
     {
         return call_user_func_array($callable, array_values($this->params));
+    }
+
+
+
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists($offset): bool
+    {
+        return isset($this->{$offset});
+    }
+
+
+
+    /**
+     * @param mixed $offset
+     * @return mixed|void
+     */
+    public function offsetGet($offset)
+    {
+        return $this->{$offset};
+    }
+
+
+
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+    */
+    public function offsetSet($offset, $value)
+    {
+        $this->{$offset} = $value;
+    }
+
+
+
+    /**
+     * @param $offset
+    */
+    public function offsetUnset($offset)
+    {
+        unset($this->{$offset});
     }
 
 }
