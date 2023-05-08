@@ -557,7 +557,7 @@ class Route
     */
     public function match(string $requestMethod, string $requestPath): bool
     {
-         return $this->matchRequestMethod($requestMethod) && $this->matchRequestPath($requestPath);
+         return $this->matchMethod($requestMethod) && $this->matchPath($requestPath);
     }
 
 
@@ -643,7 +643,7 @@ class Route
      *
      * @return bool
     */
-    public function matchRequestMethod(string $requestMethod): bool
+    public function matchMethod(string $requestMethod): bool
     {
          if(in_array($requestMethod, $this->methods)) {
               $this->options(compact('requestMethod'));
@@ -663,14 +663,11 @@ class Route
      *
      * @return bool
     */
-    public function matchRequestPath(string $requestPath): bool
+    public function matchPath(string $requestPath): bool
     {
-         $pattern = $this->getPattern();
-         $path    = $this->resolveRequestPath($requestPath);
+         if (preg_match($this->getPattern(), $this->resolveURL($requestPath), $matches)) {
 
-         if (preg_match($pattern, $path, $matches)) {
-
-              $this->params = $this->filterMatches($matches);
+              $this->params = $this->resolveMatches($matches);
 
               $this->options(compact('requestPath'));
 
@@ -689,7 +686,7 @@ class Route
      *
      * @return string
     */
-    private function resolveRequestPath(string $path): string
+    private function resolveURL(string $path): string
     {
          return (string) parse_url($path ?: '/', PHP_URL_PATH);
     }
@@ -722,7 +719,7 @@ class Route
      * @param array $matches
      * @return array
     */
-    private function filterMatches(array $matches): array
+    private function resolveMatches(array $matches): array
     {
         return array_filter($matches, function ($key) {
 
