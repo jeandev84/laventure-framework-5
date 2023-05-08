@@ -3,6 +3,8 @@ namespace Laventure\Component\Routing;
 
 
 
+use Laventure\Component\Routing\Route\Route;
+
 /**
  * @RouteCollection
  *
@@ -14,5 +16,13 @@ namespace Laventure\Component\Routing;
 */
 class RouteCollection
 {
+
+      /**
+       * @var Route[]
+      */
+      protected $routes = [];
+
+
+
 
 }

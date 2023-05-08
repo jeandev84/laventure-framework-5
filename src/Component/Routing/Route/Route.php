@@ -176,7 +176,7 @@ class Route implements RouteInterface
     /**
      * Set methods
      *
-     * @param array $methods
+     * @param array|string $methods
      *
      * @return $this
     */
@@ -346,7 +346,9 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Return controller name
+     *
+     * @return string
     */
     public function getControllerName(): string
     {
@@ -357,7 +359,9 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Return action name
+     *
+     * @return string
     */
     public function getActionName(): string
     {
@@ -381,7 +385,9 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Return route name
+     *
+     * @return string
     */
     public function getName(): string
     {
@@ -394,8 +400,10 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
-    */
+     * Returns route domain
+     *
+     * @return string
+     */
     public function getDomain(): string
     {
         return $this->domain;
@@ -405,18 +413,20 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Returns route methods
+     *
+     * @return array
     */
     public function getMethods(): array
     {
-        return $this->methods;
+         return $this->methods;
     }
 
 
 
 
     /**
-     * Convert methods to string
+     * Return route methods as string
      *
      * @return string
     */
@@ -428,8 +438,25 @@ class Route implements RouteInterface
 
 
 
+
     /**
-     * @inheritDoc
+     * Returns route requirements
+     *
+     * @return array
+    */
+    public function getPatterns(): array
+    {
+        return $this->patterns;
+    }
+
+
+
+
+
+    /**
+     * Return route callback if exist
+     *
+     * @return callable
     */
     public function getCallback(): callable
     {
@@ -441,7 +468,9 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Return others route options
+     *
+     * @return array
     */
     public function getOptions(): array
     {
@@ -452,7 +481,9 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Determine if the route name is not empty
+     *
+     * @return bool
     */
     public function hasName(): bool
     {
@@ -463,6 +494,8 @@ class Route implements RouteInterface
 
 
     /**
+     * Determine if route is callable
+     *
      * @return bool
     */
     public function isCallable(): bool
@@ -475,7 +508,9 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Return route path
+     *
+     * @return string
     */
     public function getPath(): string
     {
@@ -487,7 +522,9 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Return route params
+     *
+     * @return array
     */
     public function getParams(): array
     {
@@ -498,7 +535,9 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Returns route middlewares
+     *
+     * @return array
     */
     public function getMiddlewares(): array
     {
@@ -510,7 +549,13 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Determine if the given request params match route
+     *
+     * @param string $requestMethod
+     *
+     * @param string $requestPath
+     *
+     * @return bool
     */
     public function match(string $requestMethod, string $requestPath): bool
     {
@@ -521,12 +566,13 @@ class Route implements RouteInterface
 
 
     /**
-     * @inheritDoc
+     * Generate route from given params
+     *
+     * @param array $params
+     *
+     * @return string
     */
-    public function generatePath(array $params = []): string
-    {
-
-    }
+    public function generatePath(array $params = []): string {}
 
 
 
