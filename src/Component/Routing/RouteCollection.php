@@ -52,7 +52,17 @@ class RouteCollection
        *
        * @var array
       */
-      public $controllers = [];
+      protected $controllers = [];
+
+
+
+
+      /**
+       * Collection route group
+       *
+       * @var RouteGroup[]
+      */
+      protected $groups = [];
 
 
 
@@ -87,21 +97,21 @@ class RouteCollection
 
 
 
-     /**
-      * Add named route
-      *
-      * @param string $name
-      *
-      * @param Route $route
-      *
-      * @return Route
-     */
-      public function add(string $name, Route $route): Route
-      {
-          $route->name($name);
 
-          return $this->addRoute($route);
+      /**
+       * @param RouteGroup $group
+       * @return RouteGroup
+      */
+      public function addGroup(RouteGroup $group): RouteGroup
+      {
+           $this->groups[] = $group;
+
+           $group->rewind();
+
+           return $group;
       }
+
+
 
 
 
@@ -161,6 +171,21 @@ class RouteCollection
       {
            return $this->routes;
       }
+
+
+
+
+
+      /**
+       * Returns route groups
+       *
+       * @return RouteGroup[]
+      */
+      public function getGroups(): array
+      {
+           return $this->groups;
+      }
+
 
 
 

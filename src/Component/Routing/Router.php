@@ -84,7 +84,7 @@ class Router implements RouterInterface
      *
      * @var RouteGroup
     */
-    protected $routeGroup;
+    protected $group;
 
 
 
@@ -110,7 +110,7 @@ class Router implements RouterInterface
     {
         $this->factory    = new RouteFactory();
         $this->collection = new RouteCollection();
-        $this->routeGroup = new RouteGroup();
+        $this->group = new RouteGroup();
         $this->dispatcher = $dispatcher ?: new RouteDispatcher();
     }
 
@@ -160,7 +160,7 @@ class Router implements RouterInterface
              return '';
         }
 
-        if ($module = $this->routeGroup->getModule()) {
+        if ($module = $this->group->getModule()) {
             $this->namespace .= sprintf('\\%s', $module);
         }
 
@@ -211,7 +211,7 @@ class Router implements RouterInterface
     */
     public function prefix(string $path): static
     {
-        $this->routeGroup->prefixes(compact('path'));
+        $this->group->prefixes(compact('path'));
 
         return $this;
     }
@@ -225,7 +225,7 @@ class Router implements RouterInterface
     */
     public function module(string $module): static
     {
-        $this->routeGroup->prefixes(compact('module'));
+        $this->group->prefixes(compact('module'));
 
         return $this;
     }
@@ -239,7 +239,7 @@ class Router implements RouterInterface
     */
     public function name(string $name): static
     {
-        $this->routeGroup->prefixes(compact('name'));
+        $this->group->prefixes(compact('name'));
 
         return $this;
     }
@@ -253,7 +253,7 @@ class Router implements RouterInterface
     */
     public function middleware(array $middlewares): static
     {
-        $this->routeGroup->prefixes(compact('middlewares'));
+        $this->group->prefixes(compact('middlewares'));
 
         return $this;
     }
@@ -277,24 +277,26 @@ class Router implements RouterInterface
 
         $route->domain($this->domain);
         $route->wheres($this->patterns);
+        $route->name($this->group->getName());
+        $route->middleware($this->group->getMiddlewares());
 
         return $this->resolveHandler($route, $handler);
     }
 
 
-
-
-
     /**
-     * @param Route $route
-     *
-     * @return Route
+     * @param array $attributes
+     * @param Closure $routes
+     * @return $this
     */
-    public function addRoute(Route $route): Route
+    public function group(array $attributes, Closure $routes): static
     {
-         return $this->collection->addRoute($route);
-    }
+          $this->group = $this->factory->createRouteGroup($attributes);
+          $this->group->map($routes, $this);
+          $this->collection->addGroup($this->group);
 
+          return $this;
+    }
 
 
 
@@ -311,7 +313,7 @@ class Router implements RouterInterface
     */
     public function map(string $methods, string $path, $handler): Route
     {
-         return $this->addRoute($this->makeRoute($methods, $path, $handler));
+         return $this->collection->addRoute($this->makeRoute($methods, $path, $handler));
     }
 
 
@@ -491,7 +493,7 @@ class Router implements RouterInterface
     */
     private function resolvePath(string $path): string
     {
-         if ($prefix = $this->routeGroup->getPath()) {
+         if ($prefix = $this->group->getPath()) {
              $path = sprintf('%s/%s', $prefix, ltrim($path, '/'));
          }
 

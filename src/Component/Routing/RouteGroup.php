@@ -18,7 +18,7 @@ class RouteGroup
     /**
      * @var array
     */
-    protected $paths = [];
+    protected $path = [];
 
 
 
@@ -26,7 +26,7 @@ class RouteGroup
     /**
      * @var array
     */
-    protected $modules  = [];
+    protected $module  = [];
 
 
 
@@ -34,7 +34,7 @@ class RouteGroup
     /**
      * @var array
     */
-    protected $names = [];
+    protected $name = [];
 
 
 
@@ -77,8 +77,6 @@ class RouteGroup
     {
         call_user_func($routes, $router);
 
-        $this->rewind();
-
         return $this;
     }
 
@@ -93,7 +91,7 @@ class RouteGroup
     */
     private function path(string $prefix): static
     {
-        $this->paths[] = trim($prefix, '\\/');
+        $this->path[] = trim($prefix, '\\/');
 
         return $this;
     }
@@ -106,7 +104,7 @@ class RouteGroup
     */
     public function getPath(): string
     {
-        return join('/', $this->paths);
+        return join('/', $this->path);
     }
 
 
@@ -120,7 +118,7 @@ class RouteGroup
     */
     private function module(string $module): self
     {
-        $this->modules[] = trim($module, '\\');
+        $this->module[] = trim($module, '\\');
 
         return $this;
     }
@@ -133,7 +131,7 @@ class RouteGroup
     */
     public function getModule(): string
     {
-       return join('\\', $this->modules);
+       return join('\\', $this->module);
     }
 
 
@@ -145,7 +143,7 @@ class RouteGroup
     */
     private function name(string $name): self
     {
-        $this->names[] = $name;
+        $this->name[] = $name;
 
         return $this;
     }
@@ -158,7 +156,7 @@ class RouteGroup
     */
     public function getName(): string
     {
-        return join($this->names);
+        return join($this->name);
     }
 
 
@@ -194,11 +192,11 @@ class RouteGroup
     /**
      * @return void
     */
-    private function rewind(): void
+    public function rewind(): void
     {
-        $this->paths   = [];
-        $this->modules = [];
-        $this->names   = [];
+        $this->path   = [];
+        $this->module = [];
+        $this->name   = [];
         $this->middlewares = [];
     }
 }

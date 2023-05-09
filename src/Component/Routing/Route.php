@@ -193,6 +193,20 @@ class Route
 
 
 
+    /**
+     * Add middlewares
+     *
+     * @param $middlewares
+     *
+     * @return $this
+    */
+    public function middleware($middlewares): static
+    {
+         $this->middlewares = array_merge($this->middlewares, (array) $middlewares);
+
+         return $this;
+    }
+
 
     /**
      * Set domain
@@ -758,6 +772,6 @@ class Route
     */
     public function call(callable $callable): mixed
     {
-         return call_user_func_array($callable, array_values($this->params));
+         return call_user_func_array($callable, array_values($this->getParams()));
     }
 }
