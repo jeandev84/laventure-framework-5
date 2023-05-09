@@ -184,12 +184,29 @@ class Route
     */
     public function path(string $path): static
     {
-        $path = $path ?: '/';
-        $this->path    = $path;
-        $this->pattern = $path;
+        $this->path = $path ?: '/';
+
+        $this->pattern($path);
 
         return $this;
     }
+
+
+
+
+    /**
+     * @param string $pattern
+     *
+     * @return $this
+    */
+    public function pattern(string $pattern): static
+    {
+         $this->pattern = '/'. trim($pattern, '\\/');
+
+         return $this;
+    }
+
+
 
 
 
@@ -206,6 +223,8 @@ class Route
 
          return $this;
     }
+
+
 
 
     /**
@@ -327,7 +346,7 @@ class Route
     {
          $this->patterns[$name] = $pattern;
 
-         $this->pattern = $this->replacePlaceholders($name, $pattern);
+         $this->pattern($this->replacePlaceholders($name, $pattern));
 
          return $this;
     }
@@ -553,7 +572,7 @@ class Route
     */
     public function getPath(): string
     {
-        return $this->path;
+        return '/'. trim($this->path, '\\/');
     }
 
 
@@ -695,16 +714,13 @@ class Route
     /**
      * Determine if the give path match route path
      *
-     * @param string $requestPath
+     * @param string $path
      *
      * @return bool
     */
-    public function matchPath(string $requestPath): bool
+    public function matchPath(string $path): bool
     {
-         $pattern = "#^{$this->pattern}$#i";
-         $path    = $this->resolveURL($requestPath);
-
-         if (preg_match($pattern, $path, $matches)) {
+         if (preg_match("#^{$this->getPattern()}$#i", $this->resolveURL($path), $matches)) {
               $this->params = $this->resolveParams($matches);
               return true;
          }
@@ -723,7 +739,7 @@ class Route
     */
     private function resolveURL(string $path): string
     {
-         return (string) parse_url($path ?: '/', PHP_URL_PATH);
+         return '/'. parse_url(trim($path, '\\/'), PHP_URL_PATH);
     }
 
 

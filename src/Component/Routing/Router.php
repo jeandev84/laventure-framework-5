@@ -38,17 +38,6 @@ class Router implements RouterInterface
 
 
 
-
-    /**
-     * Route parameter
-     *
-     * @var RouteParameter
-    */
-    protected $parameter;
-
-
-
-
     /**
      * Route dispatcher
      *
@@ -110,7 +99,7 @@ class Router implements RouterInterface
     {
         $this->factory    = new RouteFactory();
         $this->collection = new RouteCollection();
-        $this->group = new RouteGroup();
+        $this->group      = new RouteGroup();
         $this->dispatcher = $dispatcher ?: new RouteDispatcher();
     }
 
@@ -284,14 +273,19 @@ class Router implements RouterInterface
     }
 
 
+
+
+
     /**
-     * @param array $attributes
+     * @param array $prefixes
+     *
      * @param Closure $routes
+     *
      * @return $this
     */
-    public function group(array $attributes, Closure $routes): static
+    public function group(array $prefixes, Closure $routes): static
     {
-          $this->group = $this->factory->createRouteGroup($attributes);
+          $this->group = $this->factory->createRouteGroup($prefixes);
           $this->group->map($routes, $this);
           $this->collection->addGroup($this->group);
 
@@ -428,6 +422,8 @@ class Router implements RouterInterface
 
     /**
      * @inheritDoc
+     *
+     * @return Route[]
     */
     public function getRoutes(): array
     {
