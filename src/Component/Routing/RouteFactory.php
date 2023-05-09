@@ -35,8 +35,8 @@ class RouteFactory
      */
      public function createRouteGroup(array $prefixes): RouteGroup
      {
-         $routeGroup = new RouteGroup();
-         $routeGroup->prefixes($prefixes);
-         return $routeGroup;
+         $group = new RouteGroup();
+         $group->prefixes($prefixes);
+         return $group;
      }
 }

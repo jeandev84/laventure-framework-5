@@ -90,7 +90,7 @@ class RouteCollection
               $this->names[$route->getName()] = $route;
            }
 
-           $this->routes[$path] = $route;
+           $this->routes[] = $route;
 
            return $route;
       }

@@ -1,7 +1,7 @@
 <?php
-namespace Laventure\Component\Routing\Route\Resource;
+namespace Laventure\Component\Routing\Resource;
 
-use Laventure\Component\Routing\Route\Resource\Contract\Resource;
+use Laventure\Component\Routing\Resource\Contract\Resource;
 
 class ApiResource extends Resource
 {

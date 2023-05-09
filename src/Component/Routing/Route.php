@@ -642,7 +642,7 @@ class Route
     */
     public function callAnonymous(): mixed
     {
-        if (! is_callable($this->callback)) {
+        if (! $this->isCallable()) {
              return false;
         }
 
@@ -664,7 +664,7 @@ class Route
          if (! method_exists($controller, $action)) {
               return false;
          }
-
+         
          return $this->call([new $controller, $action]);
     }
 
