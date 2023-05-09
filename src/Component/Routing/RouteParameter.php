@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing\Route;
+namespace Laventure\Component\Routing;
 
 
 /**
@@ -9,7 +9,7 @@ namespace Laventure\Component\Routing\Route;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route
+ * @package Laventure\Component\Routing
 */
 class RouteParameter
 {

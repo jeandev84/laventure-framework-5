@@ -1,6 +1,8 @@
 <?php
-namespace Laventure\Component\Routing\Route;
+namespace Laventure\Component\Routing;
 
+
+use Closure;
 
 /**
  * @Route
@@ -9,7 +11,7 @@ namespace Laventure\Component\Routing\Route;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Route
+ * @package Laventure\Component\Routing
 */
 class Route
 {
@@ -152,41 +154,22 @@ class Route
 
 
 
-
-    /**
-     * Set domain
-     *
-     * @param string $domain
-     *
-     * @return $this
-    */
-    public function domain(string $domain): static
-    {
-        $this->domain = $domain;
-
-        return $this;
-    }
-
-
-
-
-
     /**
      * Set methods
      *
      * @param array|string $methods
      *
      * @return $this
-    */
+     */
     public function methods(string|array $methods): static
     {
-          if (is_string($methods)) {
-              $methods = explode('|', $methods);
-          }
+        if (is_string($methods)) {
+            $methods = explode('|', $methods);
+        }
 
-          $this->methods = $methods;
+        $this->methods = $methods;
 
-          return $this;
+        return $this;
     }
 
 
@@ -212,6 +195,79 @@ class Route
 
 
     /**
+     * Set domain
+     *
+     * @param string $domain
+     *
+     * @return $this
+    */
+    public function domain(string $domain): static
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+
+
+
+
+    /**
+     * Set route callback
+     *
+     * @param callable $callback
+     *
+     * @return $this
+     */
+    public function callback(callable $callback): static
+    {
+        $this->callback = $callback;
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * Set route controller
+     *
+     * @param string $controller
+     *
+     * @param string $action
+     *
+     * @return $this
+     */
+    public function controller(string $controller, string $action): static
+    {
+        $action = compact('controller', 'action');
+
+        $this->action = array_merge($this->action, $action);
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * Set route name
+     *
+     * @param string $name
+     *
+     * @return static
+    */
+    public function name(string $name): static
+    {
+        $this->name .= $name;
+
+        return $this;
+    }
+
+
+
+
+    /**
      * Route options
      *
      * @param array $options
@@ -227,39 +283,22 @@ class Route
 
 
 
-    /**
-     * Set route callback
-     *
-     * @param callable $callback
-     *
-     * @return $this
-    */
-    public function callback(callable $callback): static
-    {
-         $this->callback = $callback;
-
-         return $this;
-    }
-
-
 
 
     /**
-     * Set route controller
+     * Set route patterns
      *
-     * @param string $controller
-     *
-     * @param string $action
+     * @param array $patterns
      *
      * @return $this
     */
-    public function controller(string $controller, string $action): static
+    public function wheres(array $patterns): static
     {
-         $action = compact('controller', 'action');
+        foreach ($patterns as $name => $pattern) {
+            $this->where($name, $pattern);
+        }
 
-         $this->action = array_merge($this->action, $action);
-
-         return $this;
+        return $this;
     }
 
 
@@ -274,7 +313,7 @@ class Route
     {
          $this->patterns[$name] = $pattern;
 
-         $this->pattern = $this->resolvePattern($name, $pattern);
+         $this->pattern = $this->replacePlaceholders($name, $pattern);
 
          return $this;
     }
@@ -348,7 +387,7 @@ class Route
      *
      * @return string
     */
-    public function getControllerName(): string
+    public function getController(): string
     {
          return $this->action['controller'];
     }
@@ -361,22 +400,10 @@ class Route
      *
      * @return string
     */
-    public function getActionName(): string
+    public function getAction(): string
     {
         return $this->action["action"];
     }
-
-
-
-
-    /**
-     * @inheritDoc
-    */
-    public function getAction(): array
-    {
-         return $this->action;
-    }
-
 
 
 
@@ -549,15 +576,15 @@ class Route
     /**
      * Determine if the given request params match route
      *
-     * @param string $requestMethod
+     * @param string $method
      *
-     * @param string $requestPath
+     * @param string $path
      *
      * @return bool
     */
-    public function match(string $requestMethod, string $requestPath): bool
+    public function match(string $method, string $path): bool
     {
-         return $this->matchMethod($requestMethod) && $this->matchPath($requestPath);
+         return $this->matchMethod($method) && $this->matchPath($path);
     }
 
 
@@ -598,8 +625,8 @@ class Route
     */
     public function callAction(): mixed
     {
-         $controller = $this->getControllerName();
-         $action     = $this->getActionName();
+         $controller = $this->getController();
+         $action     = $this->getAction();
 
          if (! method_exists($controller, $action)) {
               return false;
@@ -629,7 +656,7 @@ class Route
     */
     public function getPattern(): string
     {
-         return "#^{$this->pattern}$#i";
+         return $this->pattern;
     }
 
 
@@ -660,10 +687,11 @@ class Route
     */
     public function matchPath(string $requestPath): bool
     {
-         if (preg_match($this->getPattern(), $this->resolveURL($requestPath), $matches)) {
+         $pattern = "#^{$this->pattern}$#i";
+         $path    = $this->resolveURL($requestPath);
 
-              $this->params = $this->resolveMatches($matches);
-
+         if (preg_match($pattern, $path, $matches)) {
+              $this->params = $this->resolveParams($matches);
               return true;
          }
 
@@ -696,7 +724,7 @@ class Route
      *
      * @return string
     */
-    private function resolvePattern(string $name, string $regex): string
+    private function replacePlaceholders(string $name, string $regex): string
     {
          $regex        = str_replace('(', '(?:', $regex);
          $regex        = sprintf('(?P<%s>%s)', $name, $regex);
@@ -712,7 +740,7 @@ class Route
      * @param array $matches
      * @return array
     */
-    private function resolveMatches(array $matches): array
+    private function resolveParams(array $matches): array
     {
         return array_filter($matches, function ($key) {
 
@@ -728,8 +756,8 @@ class Route
      *
      * @return mixed
     */
-    private function call(callable $callable): mixed
+    public function call(callable $callable): mixed
     {
-        return call_user_func_array($callable, array_values($this->params));
+         return call_user_func_array($callable, array_values($this->params));
     }
 }

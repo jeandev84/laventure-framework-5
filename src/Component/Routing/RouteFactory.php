@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing\Route;
+namespace Laventure\Component\Routing;
 
 
 /**
@@ -16,11 +16,13 @@ class RouteFactory
 
 
      /**
-      * @param array $methods
-      * @param string $path
+      * @param $methods
+      *
+      * @param $path
+      *
       * @return Route
      */
-     public function createRoute(array $methods, string $path): Route
+     public function createRoute($methods, $path): Route
      {
           return new Route($methods, $path);
      }
