@@ -5,7 +5,6 @@ use Closure;
 use Laventure\Component\Routing\Contract\RouteDispatcherInterface;
 use Laventure\Component\Routing\Contract\RouterInterface;
 use Laventure\Component\Routing\Exception\RouteNotFoundException;
-use Laventure\Component\Routing\Route\RouteGroup;
 
 
 /**
@@ -157,7 +156,15 @@ class Router implements RouterInterface
     */
     public function getNamespace(): string
     {
-        return $this->namespace;
+        if (! $this->namespace) {
+             return '';
+        }
+
+        if ($module = $this->routeGroup->getModule()) {
+            $this->namespace .= sprintf('\\%s', $module);
+        }
+
+        return sprintf('%s\\', $this->namespace);
     }
 
 
@@ -180,6 +187,7 @@ class Router implements RouterInterface
 
 
 
+
     /**
      * Set route pattern
      *
@@ -195,6 +203,65 @@ class Router implements RouterInterface
     }
 
 
+
+
+    /**
+     * @param string $path
+     * @return $this
+    */
+    public function prefix(string $path): static
+    {
+        $this->routeGroup->prefixes(compact('path'));
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @param string $module
+     * @return $this
+    */
+    public function module(string $module): static
+    {
+        $this->routeGroup->prefixes(compact('module'));
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @param string $name
+     * @return $this
+    */
+    public function name(string $name): static
+    {
+        $this->routeGroup->prefixes(compact('name'));
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @param array $middlewares
+     * @return $this
+    */
+    public function middleware(array $middlewares): static
+    {
+        $this->routeGroup->prefixes(compact('middlewares'));
+
+        return $this;
+    }
+
+
+
+
+
     /**
      * @param string $methods
      *
@@ -206,12 +273,12 @@ class Router implements RouterInterface
     */
     public function makeRoute(string $methods, string $path, $handler): Route
     {
-        $route = $this->factory->createRoute($methods, $path);
+        $route = $this->factory->createRoute($methods, $this->resolvePath($path));
 
         $route->domain($this->domain);
         $route->wheres($this->patterns);
 
-        return $this->processHandler($route, $handler);
+        return $this->resolveHandler($route, $handler);
     }
 
 
@@ -402,7 +469,7 @@ class Router implements RouterInterface
      *
      * @return Route
     */
-    private function processHandler(Route $route, $handler): Route
+    private function resolveHandler(Route $route, $handler): Route
     {
         if ($handler instanceof Closure) {
             $route->callback($handler);
@@ -410,9 +477,36 @@ class Router implements RouterInterface
             $route->controller($handler[0], $handler[1] ?? '__invoke');
         } elseif (is_string($handler)) {
             list($controller, $action) = explode('@', $handler, 2);
-            $route->controller($controller, $action);
+            $route->controller($this->resolveController($controller), $action);
         }
 
         return $route;
+    }
+
+
+
+    /**
+     * @param string $path
+     * @return string
+    */
+    private function resolvePath(string $path): string
+    {
+         if ($prefix = $this->routeGroup->getPath()) {
+             $path = sprintf('%s/%s', $prefix, ltrim($path, '/'));
+         }
+
+         return $path;
+    }
+
+
+    /**
+     * @param string $name
+     * @return string
+    */
+    private function resolveController(string $name): string
+    {
+        $name = (string) str_replace($this->getNamespace(), '', $name);
+
+        return sprintf('%s%s', $this->getNamespace(), $name);
     }
 }

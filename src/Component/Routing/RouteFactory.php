@@ -2,6 +2,9 @@
 namespace Laventure\Component\Routing;
 
 
+use Closure;
+use Laventure\Component\Routing\Route\RouteGroup;
+
 /**
  * @RouteFactory
  *
@@ -25,5 +28,18 @@ class RouteFactory
      public function createRoute($methods, $path): Route
      {
           return new Route($methods, $path);
+     }
+
+
+     /**
+      * @param array $prefixes
+      *
+      * @return RouteGroup
+     */
+     public function createRouteGroup(array $prefixes): RouteGroup
+     {
+         $routeGroup = new RouteGroup();
+         $routeGroup->prefixes($prefixes);
+         return $routeGroup;
      }
 }
