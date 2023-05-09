@@ -404,10 +404,10 @@ class Router implements RouterInterface
     */
     private function processHandler(Route $route, $handler): Route
     {
-        if (is_array($handler)) {
-            $route->controller($handler[0], $handler[1] ?? '__invoke');
-        } elseif ($handler instanceof Closure) {
+        if ($handler instanceof Closure) {
             $route->callback($handler);
+        } elseif (is_array($handler)) {
+            $route->controller($handler[0], $handler[1] ?? '__invoke');
         } elseif (is_string($handler)) {
             list($controller, $action) = explode('@', $handler, 2);
             $route->controller($controller, $action);
