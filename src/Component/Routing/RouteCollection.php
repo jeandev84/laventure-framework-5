@@ -77,18 +77,9 @@ class RouteCollection
       */
       public function addRoute(Route $route): Route
       {
-           $methods = $route->getMethodsAsString();
-           $path    = $route->getPath();
-
-           $this->methods[$methods][$path] = $route;
-
-           if ($route->hasController()) {
-               $this->controllers[$route->getController()][$path] = $route;
-           }
-
-           if ($route->hasName()) {
-              $this->names[$route->getName()] = $route;
-           }
+           $this->addMethods($route);
+           $this->addController($route);
+           $this->addName($route);
 
            $this->routes[] = $route;
 
@@ -215,5 +206,38 @@ class RouteCollection
       public function getNamedRoute(string $name): ?Route
       {
             return $this->getNamedRoutes()[$name] ?? null;
+      }
+
+
+
+      private function addMethods(Route $route): static
+      {
+          $methods = $route->getMethodsAsString();
+          $path    = $route->getPath();
+
+          $this->methods[$methods][$path] = $route;
+
+          return $this;
+      }
+
+
+
+      private function addController(Route $route): static
+      {
+          if ($route->hasController()) {
+              $this->controllers[$route->getController()][$route->getPath()] = $route;
+          }
+
+          return $this;
+      }
+
+
+      private function addName(Route $route): static
+      {
+          if ($route->hasName()) {
+              $this->names[$route->getName()] = $route;
+          }
+
+          return $this;
       }
 }

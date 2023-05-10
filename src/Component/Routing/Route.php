@@ -572,7 +572,7 @@ class Route
     */
     public function getPath(): string
     {
-        return '/'. trim($this->path, '\\/');
+        return $this->path;
     }
 
 
@@ -664,7 +664,7 @@ class Route
          if (! method_exists($controller, $action)) {
               return false;
          }
-         
+
          return $this->call([new $controller, $action]);
     }
 

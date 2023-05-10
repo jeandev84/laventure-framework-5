@@ -294,8 +294,6 @@ class Router implements RouterInterface
 
 
 
-
-
     /**
      * Map routes
      *

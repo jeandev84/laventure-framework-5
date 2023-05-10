@@ -8,7 +8,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 $router = new \Laventure\Component\Routing\Router();
 $router->domain('http://localhost:8000');
-
+$router->namespace("App\\Controller");
 
 $router->get('/', function () {
     return "Welcome to Laventure framework";
@@ -26,6 +26,7 @@ $prefixes = [
     'name' => 'admin.',
     'middlewares' => []
 ];
+
 
 $router->group($prefixes, function (\Laventure\Component\Routing\Router $router) {
 
