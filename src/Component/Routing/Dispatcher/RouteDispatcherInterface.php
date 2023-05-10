@@ -1,8 +1,7 @@
 <?php
-namespace Laventure\Component\Routing\Contract;
+namespace Laventure\Component\Routing\Dispatcher;
 
-
-use Laventure\Component\Routing\Route;
+use Laventure\Component\Routing\Route\Route;
 
 /**
  * @RouteDispatcherInterface
@@ -11,7 +10,7 @@ use Laventure\Component\Routing\Route;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Contract
+ * @package Laventure\Component\Routing\Dispatcher
 */
 interface RouteDispatcherInterface
 {

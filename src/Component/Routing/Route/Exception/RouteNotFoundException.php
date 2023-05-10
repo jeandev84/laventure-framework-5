@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing\Exception;
+namespace Laventure\Component\Routing\Route\Exception;
 
 class RouteNotFoundException extends \Exception
 {

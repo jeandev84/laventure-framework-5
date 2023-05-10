@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing\Contract;
+namespace Laventure\Component\Routing;
 
 
 /**
@@ -9,7 +9,7 @@ namespace Laventure\Component\Routing\Contract;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing\Contract
+ * @package Laventure\Component\Routing
 */
 interface RouterInterface
 {

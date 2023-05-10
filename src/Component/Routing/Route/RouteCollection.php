@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing;
+namespace Laventure\Component\Routing\Route;
 
 
 /**
@@ -9,7 +9,7 @@ namespace Laventure\Component\Routing;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing
+ * @package Laventure\Component\Routing\Route
 */
 class RouteCollection
 {
@@ -50,7 +50,7 @@ class RouteCollection
       /**
        * Collection routes controllers
        *
-       * @var array
+       * @var Route[]
       */
       protected $controllers = [];
 

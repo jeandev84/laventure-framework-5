@@ -1,5 +1,5 @@
 <?php
-namespace Laventure\Component\Routing;
+namespace Laventure\Component\Routing\Route;
 
 
 /**

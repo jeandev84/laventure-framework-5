@@ -1,8 +1,6 @@
 <?php
-namespace Laventure\Component\Routing;
+namespace Laventure\Component\Routing\Route;
 
-
-use Closure;
 
 /**
  * @Route
@@ -11,7 +9,7 @@ use Closure;
  *
  * @license https://github.com/jeandev84/laventure-framework/blob/master/LICENSE
  *
- * @package Laventure\Component\Routing
+ * @package Laventure\Component\Routing\Route
 */
 class Route
 {

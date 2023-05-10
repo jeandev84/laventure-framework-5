@@ -1,7 +1,7 @@
 <?php
-namespace Laventure\Component\Routing;
+namespace Laventure\Component\Routing\Dispatcher;
 
-use Laventure\Component\Routing\Contract\RouteDispatcherInterface;
+use Laventure\Component\Routing\Route\Route;
 
 /**
  * @RouteDispatcher

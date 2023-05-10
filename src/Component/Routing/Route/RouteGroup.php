@@ -1,8 +1,9 @@
 <?php
-namespace Laventure\Component\Routing;
+namespace Laventure\Component\Routing\Route;
 
 
 use Closure;
+use Laventure\Component\Routing\Router;
 
 /**
  * @RouteGroup
